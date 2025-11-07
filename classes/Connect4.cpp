@@ -78,7 +78,7 @@ void ConnectFour::setUpBoard() {
 
 Bit* ConnectFour::createPiece(int pieceType) {
     Bit* bit = new Bit();
-    bool isRed = (pieceType == RED_PIECE || pieceType == RED_KING);
+    bool isRed = (pieceType == RED_PIECE);
     bit->LoadTextureFromFile(isRed ? "red.png" : "yellow.png");
     bit->setOwner(getPlayerAt(isRed ? RED_PLAYER : YELLOW_PLAYER));
     bit->setGameTag(pieceType);
@@ -86,20 +86,63 @@ Bit* ConnectFour::createPiece(int pieceType) {
 }
 
 bool ConnectFour::actionForEmptyHolder(BitHolder &holder) {
-    
-     if (holder.bit()) {
-        return false;
-    }
-    Bit *bit = createPiece(getCurrentPlayer()->playerNumber() == 0 ? HUMAN_PLAYER : AI_PLAYER);
-    if (bit) {
-        ImVec2 placement = bit->getPosition();
-        
-        bit->setPosition(holder.getPosition());
-        holder.setBit(bit);
-        endTurn();
+   
+   //create bit we want to place
+    if(holder.bit()) return false;
+
+   Bit *bit = createPiece(getCurrentPlayer()->playerNumber() == 0 ? HUMAN_PLAYER : AI_PLAYER);
+
+
+    if(!bit) return false;
+
+    bit->setPosition(holder.getPosition());
+    holder.setBit(bit);
+
+    BitHolder* newHolder = &holder;
+    ChessSquare* srcSquare = static_cast<ChessSquare*>(&holder);
+    ChessSquare* nextSquare = _grid->getS(srcSquare->getColumn(), srcSquare->getRow());
+    if(nextSquare && nextSquare->bit()) {
         return true;
-    }   
-    return false;
+    }
+
+    
+
+    for (int row = srcSquare->getRow(); row < _grid->getHeight(); row++) {
+        ChessSquare* nextSquare = _grid->getS(srcSquare->getColumn(), row);
+        if(nextSquare && !nextSquare->bit()) {
+            newHolder = nextSquare;
+        } else {
+            break; // Stop if we hit a filled square
+        }
+    }
+    
+    animateAndPlaceBitFromTo(*bit, holder, *newHolder);
+    endTurn();
+
+   //bit we want to find to officaly place with animateAndPlaceBitFromTo()
+   //BitHolder* newHolder;
+   //check if bit exists
+   /*if(bit) {
+    //set position to start
+    bit->setPosition(holder.getPosition());
+    holder.setBit(bit);
+    newHolder = &holder;
+    ChessSquare* srcSquare = static_cast<ChessSquare*>(&holder);
+    for (int i = srcSquare->getColumn() + 1; i < 6; i++) {
+        srcSquare = _grid->getS(srcSquare->getRow(), i);
+        if(srcSquare && !srcSquare->bit()) {
+            newHolder = srcSquare->bit()->getHolder();
+        }
+    }
+    
+   
+    animateAndPlaceBitFromTo(*bit, holder, *newHolder);
+    endTurn();
+    
+   }
+*/
+
+   return true;
 }
 
 bool ConnectFour::canBitMoveFrom(Bit &bit, BitHolder &src) {
@@ -108,6 +151,18 @@ bool ConnectFour::canBitMoveFrom(Bit &bit, BitHolder &src) {
 
 bool ConnectFour::canBitMoveFromTo(Bit& bit, BitHolder& src, BitHolder& dst) {
     return false;
+}
+
+bool ConnectFour::animateAndPlaceBitFromTo(Bit& bit, BitHolder& src, BitHolder& dst) {
+
+   // if (!src.bit() || dst.bit()) return false;
+
+    bit.setPosition(dst.getPosition());
+    dst.setBit(&bit);
+    src.setBit(nullptr);
+    
+
+    return true;
 }
 
 Player* ConnectFour::checkForWinner() { //implement check for winner
@@ -152,7 +207,7 @@ void ConnectFour::setStateString(const std::string &s) {
                 Bit* piece = createPiece(pieceType);
                 piece->setPosition(square->getPosition());
                 square->setBit(piece);
-                (pieceType == RED_PIECE || pieceType == RED_KING) ? _redPieces++ : _yellowPieces++;
+                (pieceType == RED_PIECE) ? _redPieces++ : _yellowPieces++;
             }
         }
     });

@@ -1,11 +1,21 @@
-Using the provided code that can be downloaded from this github add a new class that inherits from game.cpp in the same way TicTacToe.cpp does and implement a working version of the game Connect 4. The game should be added as a fourth choice from the menu so the choices are Tic Tac Toe, Checkers, Othello and now Connect 4.
+Implentation ReadMe
 
-The game must be playable by both by 2 people and vs. an AI. Your implementation must check for the winning condition, and display that on the right hand side the same way the current setup does for tic-tac-toe. The stopGame() method is expected to clean up and delete any memory allocated.
+Beginning steps, undesrtand how grid.cpp works as mentioned in assignment page
 
-Look at the new Grid.cpp class and see how it is used in Checkers.cpp for a good understanding about laying out a useable grid.
+- Begin implenting button to start connect 4 with Imgui Page
+- Display a 6x7 of squares acting as the board. (might want to change the color somehow)
 
-For extra credit, when a game piece is added to the board, make it animate into place instead of just appearing in it's final spot.
+- Implement a 2 player and be able to fully play a game.
 
-Graphic files are provided for the game pieces called yellow.png and red.png.
+- Trouble: when placing piece is should go all the way down to the lowest square possible.
 
-For the submission, create a new github based on the above code-base and provide a link to that along with a complete readme.md on how your implementation works.
+-Implelment the win condition for connect 4
+
+-Implement AI
+
+-Extra: animate drop down piece.
+
+Beginning: I was able to implement a board as a 6x7.
+
+Players are now able to implement a piece but currently not falling
+

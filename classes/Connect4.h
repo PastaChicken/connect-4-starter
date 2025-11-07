@@ -21,6 +21,8 @@ public:
     bool        actionForEmptyHolder(BitHolder &holder) override;
     bool        canBitMoveFrom(Bit &bit, BitHolder &src) override;
     bool        canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst) override;
+    bool        animateAndPlaceBitFromTo(Bit &bit, BitHolder &src, BitHolder &dst) override;
+
     void        stopGame() override;
 
     // AI methods
@@ -32,9 +34,7 @@ private:
     // Constants for piece types
     static const int EMPTY = 0;
     static const int RED_PIECE = 1;
-    static const int RED_KING = 2;
-    static const int YELLOW_PIECE = 3;
-    static const int YELLOW_KING = 4;
+    static const int YELLOW_PIECE = 2;
 
     // Player constants
     static const int RED_PLAYER = 0;
